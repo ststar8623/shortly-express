@@ -14,12 +14,76 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+//
+app.post('/signup', (req, res, next) => {
+
+  models.Users.get({username: req.body.username}).then((results)=> {
+    if (!results) {
+      models.Users.create(req.body).then(()=> console.log('created new user'));
+      res.redirect('/');
+    } else {
+      // console.log('user already exists');
+      res.redirect('/signup');
+    }
+  });
+});
+
+app.post('/login', (req, res, next) => {
+  // console.log(req.body);
+  // match username from db
+    // password hash and salt 
+  return models.Users.get({username: req.body.username})
+  .then((results)=> {
+    if (!results) {
+      res.redirect('/login');
+    } else {
+      return models.Users.compare(req.body.password, results.password, results.salt);
+    }
+  })
+  .then((results) => {
+    if (results) {
+      res.redirect('/');
+    } else {
+      res.redirect('/login');
+    }
+  })
+  .catch(() => {
+    console.log('catch');
+    res.redirect('/login');
+
+  });
+
+
+//then, we check if undefined or not
+  //if undefined, then redirect back to login
+// if it exists
+  // compare the password with the salt
+    // if match
+      // redirect index
+    // else redirect to login
 
 
 
-app.get('/', 
+
+
+});
+
+app.get('/login',
 (req, res) => {
+  console.log(req.url);
+  res.render('login');
+});
+
+app.get('/',
+(req, res) => {
+  console.log(req.url);
   res.render('index');
+});
+
+app.get('/signup',
+(req, res) => {
+  console.log(req.url);
+  res.render('signup');
 });
 
 app.get('/create', 

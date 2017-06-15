@@ -26,8 +26,15 @@ class Model {
   get(options) {
     let parsedOptions = parseData(options);
     let queryString = `SELECT * FROM ${this.tablename} WHERE ${parsedOptions.string.join(' AND ')}`;
+    // console.log(queryString);
+    // console.log('parsedoptions ', parsedOptions);
     return executeQuery(queryString, parsedOptions.values).spread(results => results);
   }
+
+  // userExists(username) {
+  //   let queryString = `select * from users where username = ${username}`;
+  //   return executeQuery(queryString).spread(results => results);
+  // }
 
   create(options) {
     let queryString = `INSERT INTO ${this.tablename} SET ?`;

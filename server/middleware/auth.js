@@ -1,18 +1,27 @@
 const models = require('../models');
 const Promise = require('bluebird');
+const hashUtils = require('../lib/hashUtils');
 
 module.exports.createSession = (req, res, next) => {
-  console.log('createsession: ', req.session);
-  console.log('responsecookie: ', req.cookies);
+  let randomID = Math.random().toString(36).substring(7);
+  let randomHash = hashUtils.createHash(randomID, hashUtils.createSalt());
+
   if (Object.keys(req.cookies).length === 0) {
-    req.session = {hash: 'exists'};
+    req.session = {hash: randomHash};
+    res.cookies['shortlyid'] = {value: randomHash};
+    next();
+  } else {
+    req.cookies['shortlyid'] = {value: randomHash};
+    next();
   }
-  models.Sessions.create('y56y').then((error, data, field) => {
-    console.log('result: ', error);
-  });
+
+  console.log(res.cookies);
+  
+  // models.Sessions.create(randomID).then((error, data, field) => {
+ 
+  // });
 
 
-  next();
 };
 
 /************************************************************/

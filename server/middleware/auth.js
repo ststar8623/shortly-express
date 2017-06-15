@@ -2,6 +2,17 @@ const models = require('../models');
 const Promise = require('bluebird');
 
 module.exports.createSession = (req, res, next) => {
+  console.log('createsession: ', req.session);
+  console.log('responsecookie: ', req.cookies);
+  if (Object.keys(req.cookies).length === 0) {
+    req.session = {hash: 'exists'};
+  }
+  models.Sessions.create('y56y').then((error, data, field) => {
+    console.log('result: ', error);
+  });
+
+
+  next();
 };
 
 /************************************************************/

@@ -29,43 +29,21 @@ app.post('/signup', (req, res, next) => {
 });
 
 app.post('/login', (req, res, next) => {
-  // console.log(req.body);
-  // match username from db
-    // password hash and salt 
-  return models.Users.get({username: req.body.username})
-  .then((results)=> {
-    if (!results) {
-      res.redirect('/login');
+  models.Users.get({username: req.body.username})
+  .then((result) => {
+    if (result) {
+      return models.Users.compare(req.body.password, result.password, result.salt);
     } else {
-      return models.Users.compare(req.body.password, results.password, results.salt);
+      return false;
     }
   })
-  .then((results) => {
-    if (results) {
+  .then((bool) => {
+    if (bool) {
       res.redirect('/');
     } else {
       res.redirect('/login');
     }
-  })
-  .catch(() => {
-    console.log('catch');
-    res.redirect('/login');
-
   });
-
-
-//then, we check if undefined or not
-  //if undefined, then redirect back to login
-// if it exists
-  // compare the password with the salt
-    // if match
-      // redirect index
-    // else redirect to login
-
-
-
-
-
 });
 
 app.get('/login',
